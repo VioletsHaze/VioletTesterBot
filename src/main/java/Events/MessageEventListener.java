@@ -1,8 +1,9 @@
 package Events;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,5 +17,9 @@ public class MessageEventListener extends ListenerAdapter {
         // Ignore bot messages
         if (event.getAuthor().isBot()) return;
 
+        MessageChannel channel = msg.getChannel();
+        if (content.equals("six")) {
+            channel.sendMessage("seven").queue();
+        }
     }
 }
