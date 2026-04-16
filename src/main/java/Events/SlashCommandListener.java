@@ -68,7 +68,11 @@ public class SlashCommandListener extends ListenerAdapter {
             case "killLepisRouter":
                 event.getMessage().delete().queue();
                 event.reply("It has been done.").queue();
-                Member lepi = event.getGuild().getMemberById("376369563073249280");
+
+                //Member userperms = event.getMember();
+                //Member lepi = event.getGuild().getMemberById("376369563073249280");
+
+                /*
                 if (lepi != null) {
                     try {
                         event.getGuild().kickVoiceMember(lepi).queue();
@@ -76,6 +80,7 @@ public class SlashCommandListener extends ListenerAdapter {
                         throw new RuntimeException(e);
                     }
                 }
+                */
 
                 break;
             case "spareLepisRouter":
