@@ -18,8 +18,14 @@ public class MessageEventListener extends ListenerAdapter {
         if (event.getAuthor().isBot()) return;
 
         MessageChannel channel = msg.getChannel();
-        if (content.equals("six")) {
+
+        if (content.equalsIgnoreCase("six")) {
             channel.sendMessage("seven").queue();
+        }
+
+        if (content.toLowerCase().contains("raid") && (content.toLowerCase().contains("shadow") || content.toLowerCase().contains("legends") || content.toLowerCase().contains("legend"))) {
+            msg.reply("<:raid:1494129983969296395>").queue();
+            msg.delete().queue();
         }
     }
 }

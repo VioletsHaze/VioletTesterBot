@@ -11,8 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class UserTypingListener extends ListenerAdapter {
     @Override
     public void onUserTyping(@NotNull UserTypingEvent event) {
+
         super.onUserTyping(event);
 
+        /*
         Member user = event.getMember();
         MessageChannel channel = event.getChannel();
 
@@ -20,5 +22,6 @@ public class UserTypingListener extends ListenerAdapter {
         if (user.getId().equals("323854028242944011")) {
             channel.sendMessage("shut up violet").queue();
         }
+         */
     }
 }
