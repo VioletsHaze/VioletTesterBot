@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dv8tion.jda.api.utils.ImageFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -102,6 +105,8 @@ public class VioBotUser {
             }
         }
     }
+
+    //
 
     // Converts a user into a string for debugging purposes.
     public String toString() {

@@ -23,6 +23,22 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class SlashCommandListener extends ListenerAdapter {
+    public EmbedBuilder userProfileEmbed(Member user) {
+        VioBotUser botUser = new VioBotUser(user);
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(user.getNickname());
+        eb.setAuthor(user.getUser().getName());
+        eb.setColor(Color.MAGENTA);
+        eb.setDescription(botUser.description);
+        eb.setImage(user.getEffectiveAvatarUrl(ImageFormat.PNG));
+        eb.setFooter(botUser.userid);
+
+        eb.addField("VioCoin","$"+botUser.currency,true);
+
+        return eb;
+    }
+
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         switch (event.getName()) {
@@ -82,15 +98,7 @@ public class SlashCommandListener extends ListenerAdapter {
                 VioBotUser botUser = new VioBotUser(user);
                 System.out.println(botUser);
 
-                EmbedBuilder eb = new EmbedBuilder();
-                eb.setTitle(user.getNickname());
-                eb.setAuthor(user.getUser().getName());
-                eb.setColor(Color.MAGENTA);
-                eb.setDescription(botUser.description);
-                eb.setImage(user.getEffectiveAvatarUrl(ImageFormat.PNG));
-                eb.setFooter(botUser.userid);
-
-                eb.addField("VioCoin","$"+botUser.currency,true);
+                EmbedBuilder eb = userProfileEmbed(user);
 
                 // Only give the option to update profile if the viewed user and user who called are same.
                 if (calledBy.getId().equals(user.getId())) {
@@ -147,17 +155,21 @@ public class SlashCommandListener extends ListenerAdapter {
             // "/profile"
             // Prompts the user to enter an about me via Modal.
             case "profileEditDesc":
-                TextInput aboutme = TextInput.create("biography", TextInputStyle.PARAGRAPH)
-                        .setPlaceholder("Enter in a short about me.")
-                        .setMinLength(0)
-                        .setMaxLength(400)
-                        .build();
+                if (event.getMessage().getEmbeds().getFirst().getFooter().getText().equals(event.getMember().getId())) {
+                    TextInput aboutme = TextInput.create("biography", TextInputStyle.PARAGRAPH)
+                            .setPlaceholder("Enter in a short about me.")
+                            .setMinLength(0)
+                            .setMaxLength(400)
+                            .build();
 
-                Modal modal = Modal.create("profileEditor","VioBot Profile")
-                        .addComponents(Label.of("Biography",aboutme))
-                        .build();
+                    Modal modal = Modal.create("profileEditor", "VioBot Profile")
+                            .addComponents(Label.of("Biography", aboutme))
+                            .build();
 
-                event.replyModal(modal).queue();
+                    event.replyModal(modal).queue();
+                } else {
+                    event.reply("You cannot edit other users' profiles!").setEphemeral(true).queue();
+                }
                 break;
 
             // Mandatory default case.
@@ -170,13 +182,16 @@ public class SlashCommandListener extends ListenerAdapter {
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (event.getModalId().equals("profileEditor")) {
+            Member user = event.getMember();
             String newdesc = event.getValue("biography").getAsString();
 
-            VioBotUser botUser = new VioBotUser(event.getMember());
+            VioBotUser botUser = new VioBotUser(user);
             botUser.description = newdesc;
             botUser.update();
 
-            event.reply("Profile updated successfully!").setEphemeral(true).queue();
+            EmbedBuilder eb = userProfileEmbed(user);
+            event.editMessageEmbeds(eb.build()).queue();
+            //event.reply("Profile updated successfully!").setEphemeral(true).queue();
         }
     }
 }
