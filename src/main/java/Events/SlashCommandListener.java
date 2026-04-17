@@ -1,5 +1,7 @@
 package Events;
 
+import Interactives.VioBotUser;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Member;
@@ -56,6 +58,14 @@ public class SlashCommandListener extends ListenerAdapter {
                                 Button.success("spareLepisRouter","Mercy :)")
                         )).queue();
                 break;
+            case "register":
+                Member user = event.getMember();
+                if (user != null) {
+                    VioBotUser newUserData = new VioBotUser(event.getMember());
+                    System.out.println(newUserData);
+                }
+                event.reply("This feature appears to be work in progress. Thank you for your patience!").setEphemeral(true).queue();
+                break;
             default:
                 System.out.println("No command???");
                 event.reply("There appears to have been an error. Please contact Violet.").setEphemeral(true).queue();
@@ -69,18 +79,16 @@ public class SlashCommandListener extends ListenerAdapter {
                 event.getMessage().delete().queue();
                 event.reply("It has been done.").queue();
 
-                //Member userperms = event.getMember();
-                //Member lepi = event.getGuild().getMemberById("376369563073249280");
+                boolean canKick = event.getMember().hasPermission(Permission.VOICE_MOVE_OTHERS);
+                Member lepi = event.getGuild().getMemberById("376369563073249280");
 
-                /*
-                if (lepi != null) {
+                if (lepi != null && canKick) {
                     try {
                         event.getGuild().kickVoiceMember(lepi).queue();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
-                */
 
                 break;
             case "spareLepisRouter":

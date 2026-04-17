@@ -1,7 +1,6 @@
 import Events.MessageEventListener;
 import Events.ReadyEventListener;
 import Events.SlashCommandListener;
-import Events.UserTypingListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
@@ -35,23 +34,28 @@ public class Bot {
         ).build();
 
         // Command Building
-        CommandListUpdateAction commands = jda.updateCommands();
+        CommandListUpdateAction botCommands = jda.updateCommands();
 
-        commands.addCommands(
+        botCommands.addCommands(
                 Commands.slash("ping","Test command - Replies ephemerally with pong.")
                         .setContexts(InteractionContextType.GUILD)
         );
 
-        commands.addCommands(
+        botCommands.addCommands(
                 Commands.slash("wisdom", "The bot will bestow upon you ancient wisdom from the philosopher Socrates.")
                         .setContexts(InteractionContextType.GUILD)
         );
 
-        commands.addCommands(
+        botCommands.addCommands(
                 Commands.slash("lepi", "Get a conspicuous prompt.")
                         .setContexts(InteractionContextType.GUILD)
         );
 
-        commands.queue();
+        botCommands.addCommands(
+                Commands.slash("register", "Register for VioletBot features.")
+                        .setContexts(InteractionContextType.GUILD)
+        );
+
+        botCommands.queue();
     }
 }
