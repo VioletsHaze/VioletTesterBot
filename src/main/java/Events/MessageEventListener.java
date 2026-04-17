@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 public class MessageEventListener extends ListenerAdapter {
+    private boolean seventhanker = false;
+
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         super.onMessageReceived(event);
@@ -21,11 +23,17 @@ public class MessageEventListener extends ListenerAdapter {
 
         if (content.equalsIgnoreCase("six")) {
             channel.sendMessage("seven").queue();
+            seventhanker = true;
         }
 
-        if (content.toLowerCase().contains("raid") && (content.toLowerCase().contains("shadow") || content.toLowerCase().contains("legends") || content.toLowerCase().contains("legend"))) {
+        if (content.toLowerCase().contains("raid") && (content.toLowerCase().contains("shadow") || content.toLowerCase().contains("legend"))) {
             msg.reply("<:raid:1494129983969296395>").queue();
             msg.delete().queue();
+        }
+
+        if (content.toLowerCase().contains("thank") && seventhanker) {
+            channel.sendMessage("you're welcome :3").queue();
+            seventhanker = false;
         }
     }
 }
