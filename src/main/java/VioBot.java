@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 import javax.security.auth.login.LoginException;
-import java.io.FileNotFoundException;
 
 public class VioBot {
     private final Dotenv CONFIG = Dotenv.configure().load();
@@ -58,7 +57,7 @@ public class VioBot {
         return BOT_JDA;
     }
 
-    static void main() throws LoginException, FileNotFoundException {
+    static void main() {
         try {
             VioBot bot = new VioBot();
         } catch (LoginException e) {
