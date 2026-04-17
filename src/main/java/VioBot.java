@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -47,8 +48,9 @@ public class VioBot {
                 Commands.slash("lepi", "Get a conspicuous prompt.")
                         .setContexts(InteractionContextType.GUILD)
         ).addCommands(
-                Commands.slash("profile", "View/Edit your VioletBot profile.")
+                Commands.slash("profile", "View/Edit VioletBot profile.")
                         .setContexts(InteractionContextType.GUILD)
+                        .addOption(OptionType.USER, "user", "User to view profile of. Defaults to self.")
         ).queue();
     }
 

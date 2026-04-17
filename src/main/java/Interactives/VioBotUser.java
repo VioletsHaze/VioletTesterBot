@@ -67,17 +67,7 @@ public class VioBotUser {
 
         if (!found) {
             System.out.println("User not in database.");
-            String jsonEncode = this.toJSON();
-
-            if (!jsonEncode.isEmpty()) {
-                try {
-                    FileWriter writer = new FileWriter("Userbase/"+userid+".json");
-                    writer.write(jsonEncode);
-                    writer.flush();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            this.update();
         }
     }
 
@@ -96,6 +86,21 @@ public class VioBotUser {
         }
 
         return output;
+    }
+
+    // Updates their data in the userbase.
+    public void update() {
+        String jsonEncode = this.toJSON();
+
+        if (!jsonEncode.isEmpty()) {
+            try {
+                FileWriter writer = new FileWriter("Userbase/"+userid+".json");
+                writer.write(jsonEncode);
+                writer.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     // Converts a user into a string for debugging purposes.

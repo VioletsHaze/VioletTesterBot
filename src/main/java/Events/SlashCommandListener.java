@@ -1,15 +1,23 @@
 package Events;
 
 import Interactives.VioBotUser;
-import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.label.Label;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.modals.Modal;
+import net.dv8tion.jda.api.utils.ImageFormat;
+import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.*;
 import java.util.Random;
 import java.util.Scanner;
@@ -63,12 +71,40 @@ public class SlashCommandListener extends ListenerAdapter {
 
             // View and edit a user's profile saved by the bot.
             case "profile":
-                Member user = event.getMember();
-                assert user != null;
-                VioBotUser newUserData = new VioBotUser(event.getMember());
-                System.out.println(newUserData);
+                Member calledBy = event.getMember();
+                Member user = calledBy;
 
-                event.reply("This feature appears to be work in progress. Thank you for your patience!").setEphemeral(true).queue();
+                if (event.getOption("user") != null) {
+                    user = event.getOption("user").getAsMember();
+                }
+
+                assert calledBy != null;
+                VioBotUser botUser = new VioBotUser(user);
+                System.out.println(botUser);
+
+                EmbedBuilder eb = new EmbedBuilder();
+                eb.setTitle(user.getNickname());
+                eb.setAuthor(user.getUser().getName());
+                eb.setColor(Color.MAGENTA);
+                eb.setDescription(botUser.description);
+                eb.setImage(user.getEffectiveAvatarUrl(ImageFormat.PNG));
+                eb.setFooter(botUser.userid);
+
+                eb.addField("VioCoin","$"+botUser.currency,true);
+
+                // Only give the option to update profile if the viewed user and user who called are same.
+                if (calledBy.getId().equals(user.getId())) {
+                    event.replyEmbeds(eb.build()).addComponents(ActionRow.of(
+                            Button.primary("profileEditDesc","Update Profile"),
+                            Button.link(user.getEffectiveAvatarUrl(ImageFormat.PNG),"Avatar")
+                    )).queue();
+                } else {
+                    event.replyEmbeds(eb.build()).addComponents(ActionRow.of(
+                            Button.link(user.getEffectiveAvatarUrl(ImageFormat.PNG),"Avatar")
+                    )).queue();
+                }
+
+                //event.reply("This feature appears to be work in progress. Thank you for your patience!").setEphemeral(true).queue();
                 break;
 
             // Mandatory default case. Only occurs if an invalid command is somehow sent and I missed it up.
@@ -108,9 +144,39 @@ public class SlashCommandListener extends ListenerAdapter {
                 event.reply("ok :)").queue();
                 break;
 
+            // "/profile"
+            // Prompts the user to enter an about me via Modal.
+            case "profileEditDesc":
+                TextInput aboutme = TextInput.create("biography", TextInputStyle.PARAGRAPH)
+                        .setPlaceholder("Enter in a short about me.")
+                        .setMinLength(0)
+                        .setMaxLength(400)
+                        .build();
+
+                Modal modal = Modal.create("profileEditor","VioBot Profile")
+                        .addComponents(Label.of("Biography",aboutme))
+                        .build();
+
+                event.replyModal(modal).queue();
+                break;
+
             // Mandatory default case.
             default:
                 System.out.println("A button is broken");
+        }
+    }
+
+    // Handles modals
+    @Override
+    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+        if (event.getModalId().equals("profileEditor")) {
+            String newdesc = event.getValue("biography").getAsString();
+
+            VioBotUser botUser = new VioBotUser(event.getMember());
+            botUser.description = newdesc;
+            botUser.update();
+
+            event.reply("Profile updated successfully!").setEphemeral(true).queue();
         }
     }
 }
