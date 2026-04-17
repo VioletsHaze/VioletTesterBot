@@ -20,12 +20,13 @@ public class VioBotUser {
     public String userid;
     public String description;
     public int currency;
+    public String[] ores;
 
     @JsonIgnore
     User user;
 
-    // Constructor
-    public VioBotUser() {}
+    // Constructors
+    public VioBotUser() {} // Default constructor for JSON encoding.
     public VioBotUser(@NotNull Member userPointer) {
         this.user = userPointer.getUser();
         this.userid = userPointer.getId();
@@ -109,30 +110,5 @@ public class VioBotUser {
         }
 
         return output;
-    }
-
-    // Public Getters/Setters
-    public int getCurrency() {
-        return currency;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getUserid() {
-        return userid;
-    }
-
-    public void setCurrency(int currency) {
-        this.currency = currency;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setUserid(String userid) {
-        this.userid = userid;
     }
 }

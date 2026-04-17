@@ -92,6 +92,7 @@ public class SlashCommandListener extends ListenerAdapter {
 
                 break;
             case "spareLepisRouter":
+                event.getMessage().delete().queue();
                 event.reply("ok :)").queue();
                 break;
             default:
