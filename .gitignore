@@ -42,4 +42,4 @@ build/
 .env
 
 ### USER DATA ###
-Userbase/
+# not gitignoring the userdata rn because currently im bouncing between 2 computers and its nonsensitive info lol
