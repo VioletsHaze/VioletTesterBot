@@ -4,6 +4,7 @@ import Events.SlashCommandListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -31,7 +32,7 @@ public class VioBot {
                 new MessageEventListener(),
                 //new UserTypingListener(),
                 new SlashCommandListener()
-        ).build();
+        ).setActivity(Activity.listening("Weezer")).build();
 
         // Command Building
         CommandListUpdateAction botCommands = BOT_JDA.updateCommands();
@@ -46,7 +47,7 @@ public class VioBot {
                 Commands.slash("lepi", "Get a conspicuous prompt.")
                         .setContexts(InteractionContextType.GUILD)
         ).addCommands(
-                Commands.slash("register", "Register for VioletBot features.")
+                Commands.slash("profile", "View/Edit your VioletBot profile.")
                         .setContexts(InteractionContextType.GUILD)
         ).queue();
     }

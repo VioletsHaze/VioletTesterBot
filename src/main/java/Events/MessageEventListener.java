@@ -21,19 +21,24 @@ public class MessageEventListener extends ListenerAdapter {
 
         MessageChannel channel = msg.getChannel();
 
-        if (content.equalsIgnoreCase("six")) {
-            channel.sendMessage("seven").queue();
-            seventhanker = true;
-        }
-
+        // Auto delete any message that contains "raid" and 'shadow' or 'legend'.
+        // Replies with a RAID bug spray emoji.
         if (content.toLowerCase().contains("raid") && (content.toLowerCase().contains("shadow") || content.toLowerCase().contains("legend"))) {
             msg.reply("<:raid:1494129983969296395>").queue();
             msg.delete().queue();
         }
 
+        // Says "seven" after "six" as an in-joke and says you're welcome if they are thanked directly after.
         if (content.toLowerCase().contains("thank") && seventhanker) {
             channel.sendMessage("you're welcome :3").queue();
+        }
+
+        if (seventhanker) {
             seventhanker = false;
+        }
+        if (content.equalsIgnoreCase("six")) {
+            channel.sendMessage("seven").queue();
+            seventhanker = true;
         }
     }
 }

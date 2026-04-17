@@ -20,7 +20,6 @@ public class VioBotUser {
     public String userid;
     public String description;
     public int currency;
-    public String[] ores;
 
     @JsonIgnore
     User user;
