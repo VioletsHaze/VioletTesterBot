@@ -14,11 +14,16 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.modals.Modal;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.ImageFormat;
 import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -27,20 +32,61 @@ public class SlashCommandListener extends ListenerAdapter {
         VioBotUser botUser = new VioBotUser(user);
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle(user.getNickname());
-        eb.setAuthor(user.getUser().getName());
-        eb.setColor(Color.MAGENTA);
-        eb.setDescription(botUser.description);
-        eb.setImage(user.getEffectiveAvatarUrl(ImageFormat.PNG));
-        eb.setFooter(botUser.userid);
-
-        eb.addField("VioCoin","$"+botUser.currency,true);
+        eb.setTitle(user.getNickname())
+                .setAuthor(user.getUser().getName())
+                .setColor(Color.MAGENTA)
+                .setDescription(botUser.description)
+                .setImage(user.getEffectiveAvatarUrl(ImageFormat.PNG))
+                .setFooter(botUser.userid)
+                .addField("VioCoin","$"+botUser.currency,true);
 
         return eb;
     }
 
+    public EmbedBuilder magicEightEmbed(Member user, String answer, String question) throws IOException {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(user.getNickname() + " asks: \""+question+"\"")
+                .setAuthor("Magic 8-Ball of Wisdom")
+                .setColor(Color.BLACK)
+                .setDescription(answer)
+                .setImage("attachment://eightballresponse.jpg")
+                //.setImage("attachment://"+imagepath)
+                .setFooter(user.getId());
+
+        return eb;
+    }
+
+    // returns the path to
+    public String createEightballImage(String answer, int imageid) throws IOException {
+        File file = new File("Images/eightballtemplate.jpg");
+        BufferedImage image = null;
+
+        try { image = ImageIO.read(file); } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Graphics g = image.getGraphics();
+        g.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        FontMetrics fm = g.getFontMetrics(g.getFont());
+
+        g.drawString(
+                answer,
+                (image.getWidth() -  fm.stringWidth(answer)) / 2,
+                (image.getHeight() -  fm.getHeight()) / 2 + fm.getAscent());
+        g.dispose();
+
+        String path = "Images/eightballtemplate_"+imageid+".jpg";
+        ImageIO.write(image, "jpg", new File(path));
+
+        return path;
+    }
+
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        Member calledBy = event.getMember();
+        Member user = calledBy;
+
         switch (event.getName()) {
             // Ping - Replies with pong. Very basic.
             case "ping":
@@ -87,14 +133,12 @@ public class SlashCommandListener extends ListenerAdapter {
 
             // View and edit a user's profile saved by the bot.
             case "profile":
-                Member calledBy = event.getMember();
-                Member user = calledBy;
-
                 if (event.getOption("user") != null) {
                     user = event.getOption("user").getAsMember();
                 }
 
                 assert calledBy != null;
+                assert user != null;
                 VioBotUser botUser = new VioBotUser(user);
                 System.out.println(botUser);
 
@@ -113,6 +157,53 @@ public class SlashCommandListener extends ListenerAdapter {
                 }
 
                 //event.reply("This feature appears to be work in progress. Thank you for your patience!").setEphemeral(true).queue();
+                break;
+
+            // Magic 8-ball command
+            case "8ball":
+                if (event.getOption("question") == null || Objects.requireNonNull(event.getOption("question")).getAsString().isEmpty()) {
+                    event.reply("The 8-ball cannot answer your question if you have no question to ask, silly.").setEphemeral(true).queue();
+                    break;
+                }
+
+                String askedQuestion = Objects.requireNonNull(event.getOption("question")).getAsString();
+
+                File manifest = new File("magiceight.txt");
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader("magiceight.txt"));
+                    int max = 0;
+
+                    while (reader.readLine() != null) max++;
+                    reader.close();
+
+                    Random rng = new Random();
+                    int line = rng.nextInt(0,max);
+
+                    Scanner sc = new Scanner(manifest);
+                    String finalLine = "Something went wrong.";
+                    int finalindex = 0;
+                    for (int i=0; i<max; i++) {
+                        String newline = sc.nextLine();
+                        if (i==line) {
+                            finalLine = newline;
+                            finalindex = i;
+                            break;
+                        }
+                    }
+
+                    assert user != null;
+                    EmbedBuilder responseEmbed = magicEightEmbed(user, finalLine, askedQuestion);
+
+                    String imagepath = createEightballImage(finalLine, finalindex);
+                    InputStream file = new FileInputStream(imagepath);
+
+                    event.replyFiles(FileUpload.fromData(file, "eightballresponse.jpg")).setEmbeds(responseEmbed.build()).queue();
+                } catch (FileNotFoundException e) {
+                    System.out.println("Where's my wisdom?");
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
 
             // Mandatory default case. Only occurs if an invalid command is somehow sent and I missed it up.

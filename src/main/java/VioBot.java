@@ -50,6 +50,10 @@ public class VioBot {
                 Commands.slash("profile", "View/Edit VioletBot profile.")
                         .setContexts(InteractionContextType.GUILD)
                         .addOption(OptionType.USER, "user", "User to view profile of. Defaults to self.")
+        ).addCommands(
+                Commands.slash("8ball", "Ask the Magic 8 Ball of Grand Wisdom a question.")
+                        .setContexts(InteractionContextType.GUILD)
+                        .addOption(OptionType.STRING, "question", "The question you wish to ask.")
         ).queue();
     }
 
