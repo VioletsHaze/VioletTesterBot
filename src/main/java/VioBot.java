@@ -41,11 +41,11 @@ public class VioBot {
                 Commands.slash("ping","Test command - Replies ephemerally with pong.")
                         .setContexts(InteractionContextType.GUILD)
         ).addCommands(
-                Commands.slash("wisdom", "The bot will bestow upon you ancient wisdom from the philosopher Socrates.")
+                Commands.slash("wisdom", "The bot will bestow upon you ancient wisdom from the great philosopher Socrates.")
                         .setContexts(InteractionContextType.GUILD)
-        ).addCommands(
-                Commands.slash("lepi", "Get a conspicuous prompt.")
-                        .setContexts(InteractionContextType.GUILD)
+        //).addCommands( this command is disabled for the sharing of this bot
+                //Commands.slash("lepi", "Get a conspicuous prompt.")
+                        //.setContexts(InteractionContextType.GUILD)
         ).addCommands(
                 Commands.slash("profile", "View/Edit VioletBot profile.")
                         .setContexts(InteractionContextType.GUILD)
@@ -57,9 +57,9 @@ public class VioBot {
         ).queue();
     }
 
-    public JDA getJDA() {
-        return BOT_JDA;
-    }
+    //public JDA getJDA() {
+    //    return BOT_JDA;
+    //} not used
 
     static void main() {
         try {
