@@ -13,11 +13,11 @@ import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 import javax.security.auth.login.LoginException;
 
-public class VioBot {
+public class Main {
     private final Dotenv CONFIG = Dotenv.configure().load();
     private final JDA BOT_JDA;
 
-    public VioBot() throws LoginException {
+    public Main() throws LoginException {
         final String TOKEN = CONFIG.get("TOKEN");
 
         JDABuilder builder = JDABuilder.createDefault(TOKEN);
@@ -63,7 +63,7 @@ public class VioBot {
 
     static void main() {
         try {
-            VioBot bot = new VioBot();
+            Main bot = new Main();
         } catch (LoginException e) {
             System.out.println("Login Error has occurred. :<");
             e.printStackTrace();
